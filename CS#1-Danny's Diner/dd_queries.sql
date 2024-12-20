@@ -30,23 +30,27 @@ GROUP BY m.product_name
 ORDER BY COUNT(s.product_id) DESC;
 
 --5.Which item was the most popular for each customer?
-SELECT * FROM Sales;
-SELECT * FROM Menu;
-SELECT * FROM Members;
-
-CREATE VIEW MostPopularItem AS
-SELECT 
+WITH MostPopularItem AS(
+    SELECT 
     s.customer_id AS CustomerID, 
     m.product_name AS ItemName, 
     COUNT(m.product_name) AS TimesPurchased
-FROM Sales s
-JOIN Menu m
-ON s.product_id = m.product_id
-GROUP BY customer_id,m.product_name;
+    FROM Sales s
+    JOIN Menu m
+    ON s.product_id = m.product_id
+    GROUP BY customer_id,m.product_name
+)
 
-SELECT CustomerID as 'Customer', ItemName as 'Most Popular Item'
-FROM MostPopularItem
-WHERE TimesPurchased = (SELECT MAX(TimesPurchased) FROM MostPopularItem WHERE s.customer_id = CustomerID)
+SELECT CustomerID, ItemName
+FROM(
+    SELECT 
+    CustomerID, 
+    ItemName, 
+    RANK() OVER(PARTITION BY CustomerID ORDER BY TimesPurchased DESC) AS RowRank
+    FROM MostPopularItem) RankedResults
+WHERE RowRank = 1
+ORDER BY CustomerID;
+
 
 --6.Which item was purchased first by the customer after they became a member?
 
