@@ -53,9 +53,44 @@ ORDER BY CustomerID;
 
 
 --6.Which item was purchased first by the customer after they became a member?
+WITH FirstBought AS (
+    SELECT s.customer_id AS CustomerID,
+    m.product_name AS ProductName,
+    s.order_date AS OrderDate,
+    mem.join_date AS JoinedDate
+    FROM Sales s
+    JOIN Menu m ON s.product_id = m.product_id
+    JOIN Members mem ON s.customer_id = mem.customer_id
+    WHERE s.order_date > mem.join_date
+)
+
+SELECT CustomerID, ProductName FROM
+    (SELECT CustomerID, ProductName, 
+    RANK() OVER(PARTITION BY CustomerID ORDER BY OrderDate ASC) AS RowRank 
+    FROM FirstBought) RankedResults
+WHERE RowRank = 1
+ORDER BY CustomerID;
 
 
+--7.Which item was purchased just before the customer became a member?
+--here I am assuming customerID A bought food then became member on 2021-01-07.
+WITH BeforeBought AS (
+    SELECT s.customer_id AS CustomerID,
+    m.product_name AS ProductName,
+    s.order_date AS OrderDate,
+    mem.join_date AS JoinedDate
+    FROM Sales s
+    JOIN Menu m ON s.product_id = m.product_id
+    JOIN Members mem ON s.customer_id = mem.customer_id
+    WHERE s.order_date <= mem.join_date
+)
 
+SELECT CustomerID, ProductName
+FROM (
+    SELECT CustomerID, ProductName,
+    RANK() OVER(PARTITION BY CustomerID ORDER BY OrderDate DESC) AS RowRank
+    FROM BeforeBought) RankedResults
+WHERE RowRank=1
+ORDER BY CustomerID;
 
-
-
+--8.What is the total items and amount spent for each member before they became a member?
