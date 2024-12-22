@@ -61,7 +61,7 @@ WITH FirstBought AS (
     FROM Sales s
     JOIN Menu m ON s.product_id = m.product_id
     JOIN Members mem ON s.customer_id = mem.customer_id
-    WHERE s.order_date > mem.join_date
+    WHERE s.order_date >= mem.join_date
 )
 
 SELECT CustomerID, ProductName FROM
@@ -135,7 +135,7 @@ WITH TotalPoints AS(
     GROUP BY s.customer_id,s.order_date
     HAVING MONTH(s.order_date) = 1)
 
-SELECT CustomerID, SUM(CustomerPoints)
+SELECT CustomerID, SUM(CustomerPoints) AS 'Total Customer Points'
 FROM TotalPoints
 GROUP BY CustomerID;
 
