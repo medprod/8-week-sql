@@ -69,7 +69,7 @@ VALUES
 DROP TABLE IF EXISTS pizza_names;
 CREATE TABLE pizza_names (
   "pizza_id" INTEGER,
-  "pizza_name" TEXT
+  "pizza_name" VARCHAR(255)
 );
 INSERT INTO pizza_names
   ("pizza_id", "pizza_name")
