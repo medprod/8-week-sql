@@ -16,11 +16,15 @@ FROM customer_orders;
 --How many successful orders were delivered by each runner?
 SELECT runner_id, COUNT(order_id) AS 'Number of Successful Orders'
 FROM runner_orders
+WHERE pickup_time != 'null'
 GROUP BY runner_id;
 
 --How many of each type of pizza was delivered?
 SELECT c.pizza_id, COUNT(c.order_id) AS 'Number of Pizzas Delivered'
 FROM customer_orders c
+JOIN runner_orders r 
+ON c.order_id = r.order_id
+WHERE r.pickup_time != 'null'
 GROUP BY pizza_id;
 
 --How many Vegetarian and Meatlovers were ordered by each customer?
@@ -39,17 +43,8 @@ GROUP BY c.order_id, r.pickup_time
 ORDER BY COUNT(c.pizza_id) DESC
 
 --For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
+
+
 SELECT * FROM customer_orders;
 SELECT * FROM runner_orders;
 SELECT * FROM pizza_names;
-
---How many pizzas were delivered that had both exclusions and extras?
-WITH Excextras AS (
-    SELECT c.order_id AS orderID, c.customer_id AS custID, c.pizza_id AS pizzaID,
-    (CASE WHEN c.exclusions NOT IN (NULL) AND c.extras NOT IN (NULL)
-    THEN 1 ELSE 0 END) AS ExclusionsExtras
-    FROM customer_orders c
-)
-
-SELECT orderID, custID, pizzaID, ExclusionsExtras 
-FROM Excextras
