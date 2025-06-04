@@ -35,11 +35,27 @@ FROM foodie_fi.subscriptions s
 --5. How many customers have churned straight after their initial free trial - 
 --what percentage is this rounded to the nearest whole number?
 
---customer_id must only appear twice? and plan_id of that once should be 0 and then 4
+--[customer_id must only appear twice and plan_id of of first date should be 0 and second date should be 4]
+WITH row_select_04 AS(
+	SELECT customer_id, plan_id, start_date,
+	ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY start_date) as row_num
+	FROM foodie_fi.subscriptions
+), 
+--selects all customers who appear twice only 
+churned_after_trial AS(
+	SELECT customer_id FROM row_select_04
+	WHERE (row_num = 1 AND plan_id = 0) OR (row_num = 2 AND plan_id = 4) 
+	GROUP BY customer_id
+	HAVING COUNT(*) = 2 
+)
+SELECT COUNT(*) AS churned_customers,
+ROUND(
+	100.0 * COUNT(*) / (SELECT COUNT(DISTINCT(customer_id)) FROM foodie_fi.subscriptions)
+) AS churn_percentage
+FROM churned_after_trial;
 
-SELECT * FROM foodie_fi.plans;
 
-SELECT * FROM foodie_fi.subscriptions;
+
 
 
 
