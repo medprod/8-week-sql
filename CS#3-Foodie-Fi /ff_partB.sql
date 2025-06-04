@@ -8,16 +8,14 @@ SELECT * FROM foodie_fi.subscriptions;
 SELECT COUNT(DISTINCT(customer_id)) AS total_customers
 FROM foodie_fi.subscriptions;
 
---2. What is the monthly distribution of trial plan start_date values for our dataset 
--- use the start of the month as the group by value
+--2. What is the monthly distribution of trial plan start_date values for our dataset use the start of the month as the group by value
 SELECT COUNT(p.plan_id) AS total_subscriptions, date_trunc('month',s.start_date) AS month_start
 FROM foodie_fi.plans p
 JOIN foodie_fi.subscriptions s ON p.plan_id = s.plan_id
 GROUP BY date_trunc('month',s.start_date)
 ORDER BY month_start;
 
---3. What plan start_date values occur after the year 2020 for our dataset? 
---Show the breakdown by count of events for each plan_name
+--3. What plan start_date values occur after the year 2020 for our dataset? Show the breakdown by count of events for each plan_name
 SELECT COUNT(p.plan_id), p.plan_name, date_trunc('month',s.start_date) AS month_start 
 FROM foodie_fi.plans p
 JOIN foodie_fi.subscriptions s ON p.plan_id = s.plan_id
