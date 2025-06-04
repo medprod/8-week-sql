@@ -26,14 +26,12 @@ GROUP BY p.plan_name, month_start
 ORDER BY month_start;
 
 
---4. What is the customer count and percentage of customers who have churned rounded 
---to 1 decimal place?
+--4. What is the customer count and percentage of customers who have churned rounded to 1 decimal place?
 SELECT COUNT(*) FILTER (WHERE s.plan_id = 4) AS total_churned,
 ROUND(100.0* COUNT(*) FILTER (WHERE s.plan_id = 4)/COUNT(DISTINCT s.customer_id),1) AS churn_percenatge
 FROM foodie_fi.subscriptions s
 
---5. How many customers have churned straight after their initial free trial - 
---what percentage is this rounded to the nearest whole number?
+--5. How many customers have churned straight after their initial free trial - what percentage is this rounded to the nearest whole number?
 
 --[customer_id must only appear twice and plan_id of of first date should be 0 and second date should be 4]
 WITH row_select_04 AS(
