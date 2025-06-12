@@ -52,9 +52,6 @@ FROM churned_after_trial;
 
 
 --6. What is the number and percentage of customer plans after their initial free trial?
-SELECT * FROM foodie_fi.plans;
-SELECT * FROM foodie_fi.subscriptions;
-
 WITH count_per_plan as(
 	SELECT s.plan_id AS planID, p.plan_name AS planName,
 	COUNT(s.customer_id) AS customers_count 
@@ -67,6 +64,30 @@ WITH count_per_plan as(
 SELECT planID, planName, customers_count,
 ROUND(100.0*customers_count/(SELECT COUNT(DISTINCT customer_id) FROM foodie_fi.subscriptions), 2) AS percentage
 FROM count_per_plan
+
+--7. What is the customer count and percentage breakdown of all 5 plan_name values at 2020-12-31?
+SELECT * FROM foodie_fi.plans;
+
+WITH rank_num_cte AS(
+	SELECT customer_id AS custID, plan_id AS planID, start_date,
+	RANK() OVER (PARTITION BY customer_id ORDER BY start_date DESC) AS rank_num
+	FROM foodie_fi.subscriptions
+	WHERE start_date <= '2020-12-31'
+	ORDER BY customer_id
+	),
+max_rank_num AS(
+	SELECT custID, planID, start_date, rank_num
+	FROM rank_num_cte
+	WHERE rank_num=1
+)
+SELECT planID as plan_id, 
+COUNT(custID) AS plan_customers,
+ROUND(100.0*COUNT(custID)/(SELECT COUNT(DISTINCT customer_id) FROM foodie_fi.subscriptions),2) AS percentage
+FROM max_rank_num
+GROUP BY plan_id;
+
+
+
 
 
 
