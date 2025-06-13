@@ -120,38 +120,31 @@ SELECT AVG(f.final_date - i.initial_date) AS days_between
 FROM final_date_cte f
 JOIN initial_date_cte i ON f.customer_id = i.customer_id
 
+--10. Can you further breakdown this average value into 30 day periods (i.e. 0-30 days, 31-60 days etc)
 
 
+--11.How many customers downgraded from a pro monthly to a basic monthly plan in 2020?
+SELECT * FROM foodie_fi.plans;
 
+SELECT * FROM foodie_fi.subscriptions;
 
-
-WITH rank_cte AS (
-	SELECT customer_id, plan_id, 
-	start_date, 
-	RANK() OVER(PARTITION BY customer_id ORDER BY start_date ASC) as rank_num
+WITH CTE_rank AS(
+	SELECT customer_id, plan_id, start_date, 
+	RANK() OVER(PARTITION BY customer_id ORDER BY start_date) AS rank_num
 	FROM foodie_fi.subscriptions
-	ORDER BY customer_id
+	WHERE date_part('year', start_date) <= 2020 
+	AND plan_id IN (1,2)
+),
+prevcurr_plan AS(
+	SELECT curr.customer_id
+	FROM CTE_rank curr
+	JOIN CTE_rank prev
+	ON curr.customer_id = prev.customer_id
+	AND curr.rank_num = prev.rank_num + 1
+	WHERE curr.plan_id = 1 AND prev.plan_id = 2
 )
-	SELECT customer_id, plan_id, start_date AS initial_date, rank_num
-	FROM rank_cte
-	WHERE rank_num = 1
-
-,
-
-
-
-annual_cte AS(
-	SELECT customer_id, plan_id, start_date AS annual_plan_date
-	FROM foodie_fi.subscriptions
-	WHERE plan_id = 3
-
-)
-
-
-
-
-
-
+SELECT COUNT(DISTINCT customer_id) AS customers_downgraded
+FROM prevcurr_plan;
 
 
 
