@@ -103,7 +103,6 @@ FROM cte_2020
 WHERE rank_num = 1 AND plan_id = 3
 
 --9. How many days on average does it take for a customer to an annual plan from the day they join Foodie-Fi?
-
 WITH initial_date_cte AS (
 	SELECT customer_id, plan_id, 
 	start_date AS initial_date
@@ -121,13 +120,33 @@ FROM final_date_cte f
 JOIN initial_date_cte i ON f.customer_id = i.customer_id
 
 --10. Can you further breakdown this average value into 30 day periods (i.e. 0-30 days, 31-60 days etc)
-
+WITH initial_date_cte AS (
+	SELECT customer_id, plan_id, 
+	start_date AS initial_date
+	FROM foodie_fi.subscriptions
+	WHERE plan_id = 0
+),
+final_date_cte AS (
+	SELECT customer_id, plan_id, 
+	start_date AS final_date
+	FROM foodie_fi.subscriptions
+	WHERE plan_id = 3
+),
+bins_cte AS(
+	SELECT f.customer_id,
+	--width_bucket(expression, min_expression, max_expression, num_buckets) == (exp, min days=0, max days=365, 30 days so 12 intervals)
+	WIDTH_BUCKET(f.final_date - i.initial_date, 0, 365, 12) AS days_between
+	FROM final_date_cte f
+	JOIN initial_date_cte i ON f.customer_id = i.customer_id
+)
+SELECT COUNT(*) as customer_count,
+CASE WHEN days_between = 1 THEN ((days_between-1)*30 || '-' || ((days_between)*30) || ' days')
+WHEN days_between > 1 THEN (((days_between-1)*30)+1 || '-' || ((days_between)*30) || ' days') END AS breakdown
+FROM bins_cte
+GROUP BY days_between
+ORDER BY days_between
 
 --11.How many customers downgraded from a pro monthly to a basic monthly plan in 2020?
-SELECT * FROM foodie_fi.plans;
-
-SELECT * FROM foodie_fi.subscriptions;
-
 WITH CTE_rank AS(
 	SELECT customer_id, plan_id, start_date, 
 	RANK() OVER(PARTITION BY customer_id ORDER BY start_date) AS rank_num
