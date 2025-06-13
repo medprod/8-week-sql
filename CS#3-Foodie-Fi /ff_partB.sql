@@ -89,7 +89,6 @@ FROM max_rank_num
 GROUP BY plan_id;
 
 --8.How many customers have upgraded to an annual plan in 2020?
-
 SELECT COUNT(customer_id) FROM foodie_fi.subscriptions
 WHERE date_part('year', start_date)<='2020' AND plan_id = 3
 --OR
@@ -104,8 +103,48 @@ FROM cte_2020
 WHERE rank_num = 1 AND plan_id = 3
 
 --9. How many days on average does it take for a customer to an annual plan from the day they join Foodie-Fi?
+WITH initial_date_cte AS (
+	SELECT customer_id, plan_id, 
+	start_date AS initial_date
+	FROM foodie_fi.subscriptions
+	WHERE plan_id = 0
+),
+final_date_cte AS (
+	SELECT customer_id, plan_id, 
+	start_date AS final_date
+	FROM foodie_fi.subscriptions
+	WHERE plan_id = 3
+)
+SELECT AVG(f.final_date - i.initial_date) AS days_between
+FROM final_date_cte f
+JOIN initial_date_cte i ON f.customer_id = i.customer_id
 
 
+
+
+
+
+WITH rank_cte AS (
+	SELECT customer_id, plan_id, 
+	start_date, 
+	RANK() OVER(PARTITION BY customer_id ORDER BY start_date ASC) as rank_num
+	FROM foodie_fi.subscriptions
+	ORDER BY customer_id
+)
+	SELECT customer_id, plan_id, start_date AS initial_date, rank_num
+	FROM rank_cte
+	WHERE rank_num = 1
+
+,
+
+
+
+annual_cte AS(
+	SELECT customer_id, plan_id, start_date AS annual_plan_date
+	FROM foodie_fi.subscriptions
+	WHERE plan_id = 3
+
+)
 
 
 
