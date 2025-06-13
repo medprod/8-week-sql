@@ -103,6 +103,7 @@ FROM cte_2020
 WHERE rank_num = 1 AND plan_id = 3
 
 --9. How many days on average does it take for a customer to an annual plan from the day they join Foodie-Fi?
+
 WITH initial_date_cte AS (
 	SELECT customer_id, plan_id, 
 	start_date AS initial_date
