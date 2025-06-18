@@ -1,9 +1,9 @@
-SELECT * FROM runners;
-SELECT * FROM customer_orders;
-SELECT * FROM runner_orders;
-SELECT * FROM pizza_names;
-SELECT * FROM pizza_recipes;
-SELECT * FROM pizza_toppings;
+SELECT * FROM pizza_runner.runners;
+SELECT * FROM pizza_runner.customer_orders;
+SELECT * FROM pizza_runner.runner_orders;
+SELECT * FROM pizza_runner.pizza_names;
+SELECT * FROM pizza_runner.pizza_recipes;
+SELECT * FROM pizza_runner.pizza_toppings;
 
 --How many pizzas were ordered?
 SELECT COUNT(order_id) AS 'Total Pizzas Ordered'
