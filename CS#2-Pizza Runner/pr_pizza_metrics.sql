@@ -41,4 +41,23 @@ SELECT COUNT(order_id) AS total_pizzas_ordered
 FROM pizza_runner.customer_orders;
 
 --2.How many unique customer orders were made?
+SELECT COUNT(DISTINCT customer_id) AS distinct_customers
+FROM pizza_runner.customer_orders;
+
+--3.How many successful orders were delivered by each runner?
+SELECT runner_id, COUNT(DISTINCT order_id) AS successful_deliveries
+FROM pizza_runner.runner_orders
+WHERE cancellation = ''
+GROUP BY runner_id;
+
+--4.How many of each type of pizza was delivered?
+SELECT c.pizza_id, COUNT(c.order_id) AS delivered_pizzas
+FROM pizza_runner.customer_orders c 
+JOIN pizza_runner.runner_orders r
+ON c.order_id = r.order_id
+WHERE cancellation = ''
+GROUP BY c.pizza_id;
+
+
+
 
