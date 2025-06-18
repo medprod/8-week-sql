@@ -1,3 +1,6 @@
+CREATE SCHEMA pizza_runner;
+SET search_path = pizza_runner;
+
 DROP TABLE IF EXISTS runners;
 CREATE TABLE runners (
   "runner_id" INTEGER,
@@ -19,7 +22,7 @@ CREATE TABLE customer_orders (
   "pizza_id" INTEGER,
   "exclusions" VARCHAR(4),
   "extras" VARCHAR(4),
-  "order_time" VARCHAR(64)
+  "order_time" TIMESTAMP
 );
 
 INSERT INTO customer_orders
@@ -69,7 +72,7 @@ VALUES
 DROP TABLE IF EXISTS pizza_names;
 CREATE TABLE pizza_names (
   "pizza_id" INTEGER,
-  "pizza_name" VARCHAR(255)
+  "pizza_name" TEXT
 );
 INSERT INTO pizza_names
   ("pizza_id", "pizza_name")
@@ -110,11 +113,3 @@ VALUES
   (10, 'Salami'),
   (11, 'Tomatoes'),
   (12, 'Tomato Sauce');
-
-
-SELECT * FROM runners;
-SELECT * FROM customer_orders;
-SELECT * FROM runner_orders;
-SELECT * FROM pizza_names;
-SELECT * FROM pizza_recipes;
-SELECT * FROM pizza_toppings;
