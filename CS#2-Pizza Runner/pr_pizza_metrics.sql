@@ -102,4 +102,23 @@ FROM pizza_runner.customer_orders
 GROUP BY date_part('hour', order_time) 
 ORDER BY hour_ordered;
 
+--10. What was the volume of orders for each day of the week?
+WITH CTE_DAY AS(
+	SELECT date_part('isodow', order_time) AS day_of_week,
+	COUNT(order_id) AS order_volume
+	FROM pizza_runner.customer_orders 
+	GROUP BY day_of_week
+	order by day_of_week)
+SELECT 
+CASE WHEN day_of_week = 1 THEN 'Monday'
+WHEN day_of_week = 2 THEN 'Tuesday'
+WHEN day_of_week = 3 THEN 'Wednesday'
+WHEN day_of_week = 4 THEN 'Thursday'
+WHEN day_of_week = 5 THEN 'Friday'
+WHEN day_of_week = 6 THEN 'Saturday'
+ELSE'Sunday' END AS weekday,
+order_volume
+FROM CTE_DAY
+
+
 
