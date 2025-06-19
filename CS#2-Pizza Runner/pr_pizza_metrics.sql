@@ -58,6 +58,47 @@ ON c.order_id = r.order_id
 WHERE cancellation = ''
 GROUP BY c.pizza_id;
 
+--5.How many Vegetarian and Meatlovers were ordered by each customer?
+SELECT * FROM pizza_runner.customer_orders;
+SELECT * FROM pizza_runner.runner_orders;
+SELECT * FROM pizza_runner.pizza_names;
 
+SELECT c.customer_id, p.pizza_name, COUNT(c.order_id)
+FROM pizza_runner.customer_orders c
+JOIN pizza_runner.pizza_names p
+ON c.pizza_id = p.pizza_id
+GROUP BY c.customer_id, p.pizza_name
+ORDER BY c.customer_id
 
+--6.What was the maximum number of pizzas delivered in a single order?
+SELECT c.order_id, COUNT(c.pizza_id) AS number_of_pizzas
+FROM pizza_runner.customer_orders c
+JOIN pizza_runner.runner_orders r
+ON c.order_id = r.order_id
+WHERE r.cancellation = ''
+GROUP BY c.order_id
+ORDER BY number_of_pizzas DESC
+LIMIT 1;
 
+--7.For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
+SELECT c.customer_id, 
+SUM(CASE WHEN c.exclusions != '' OR c.extras != '' THEN 1 ELSE 0 END) AS change_count,
+SUM(CASE WHEN c.exclusions = '' AND c.extras = '' THEN 1 ELSE 0 END) AS no_change
+FROM pizza_runner.customer_orders c
+JOIN pizza_runner.runner_orders r
+ON c.order_id = r.order_id
+WHERE r.cancellation =''
+GROUP BY c.customer_id
+ORDER BY c.customer_id;
+
+--8.How many pizzas were delivered that had both exclusions and extras?
+SELECT * FROM pizza_runner.customer_orders;
+SELECT * FROM pizza_runner.runner_orders;
+SELECT * FROM pizza_runner.pizza_names;
+
+SELECT
+SUM(CASE WHEN c.exclusions!='' AND c.extras!='' THEN 1 ELSE 0 END) AS changed_pizza_count 
+FROM pizza_runner.customer_orders c
+JOIN pizza_runner.runner_orders r
+ON c.order_id = r.order_id
+WHERE r.cancellation = ''
