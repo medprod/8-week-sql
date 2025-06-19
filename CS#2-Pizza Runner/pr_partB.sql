@@ -36,6 +36,22 @@ GROUP BY runner_id
 ORDER BY runner_id;
 
 --3.Is there any relationship between the number of pizzas and how long the order takes to prepare?
+WITH pizza_prep_time AS(
+	SELECT r.order_id, COUNT(c.pizza_id) AS pizza_count,
+	date_part('minute', r.pickup_time) as pickup_min,
+	date_part('minute', c.order_time) as order_min,
+	r.pickup_time - c.order_time AS time_diff
+	FROM pizza_runner.runner_orders r
+	JOIN pizza_runner.customer_orders c
+	ON r.order_id = c.order_id
+	WHERE distance is not null AND duration != ''
+	GROUP BY r.order_id, pickup_min, order_min, time_diff
+	)
+SELECT pizza_count, date_part('minutes', AVG(time_diff)) AS avg_prep_time
+FROM pizza_prep_time 
+GROUP BY pizza_count
+ORDER BY pizza_count
+
 
 --4.What was the average distance travelled for each customer?
 --cleaning up the distance column
