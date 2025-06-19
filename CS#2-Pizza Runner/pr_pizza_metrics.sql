@@ -85,10 +85,6 @@ GROUP BY c.customer_id
 ORDER BY c.customer_id;
 
 --8.How many pizzas were delivered that had both exclusions and extras?
-SELECT * FROM pizza_runner.customer_orders;
-SELECT * FROM pizza_runner.runner_orders;
-SELECT * FROM pizza_runner.pizza_names;
-
 SELECT
 SUM(CASE WHEN c.exclusions!='' AND c.extras!='' THEN 1 ELSE 0 END) AS changed_pizza_count 
 FROM pizza_runner.customer_orders c
