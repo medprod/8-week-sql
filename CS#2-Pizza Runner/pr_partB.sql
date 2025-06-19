@@ -35,9 +35,29 @@ FROM avg_time
 GROUP BY runner_id
 ORDER BY runner_id;
 
+--3.Is there any relationship between the number of pizzas and how long the order takes to prepare?
 
+--4.What was the average distance travelled for each customer?
+--cleaning up the distance column
+UPDATE pizza_runner.runner_orders
+SET distance = NULL
+WHERE distance = '';
 
+UPDATE pizza_runner.runner_orders
+SET distance = TRIM('km' FROM distance)
+WHERE distance IS NOT NULL
 
-	
+ALTER TABLE pizza_runner.runner_orders
+ALTER column distance TYPE numeric 
+USING distance::numeric
+
+--query for 4
+SELECT c.customer_id,
+ROUND(AVG(distance),2) AS avg_distance_travelled
+FROM pizza_runner.customer_orders c
+JOIN pizza_runner.runner_orders r
+ON c.order_id = r.order_id
+GROUP BY c.customer_id
+ORDER BY c.customer_id
 
 
