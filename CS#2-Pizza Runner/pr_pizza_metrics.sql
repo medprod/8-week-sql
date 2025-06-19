@@ -34,9 +34,6 @@ USING to_timestamp(pickup_time, 'YYYY-MM-DD HH24:MI:SS')
 
 
 --1. How many pizzas were ordered?
-SELECT * FROM pizza_runner.customer_orders;
-SELECT * FROM pizza_runner.runner_orders;
-
 SELECT COUNT(order_id) AS total_pizzas_ordered
 FROM pizza_runner.customer_orders;
 
@@ -59,10 +56,6 @@ WHERE cancellation = ''
 GROUP BY c.pizza_id;
 
 --5.How many Vegetarian and Meatlovers were ordered by each customer?
-SELECT * FROM pizza_runner.customer_orders;
-SELECT * FROM pizza_runner.runner_orders;
-SELECT * FROM pizza_runner.pizza_names;
-
 SELECT c.customer_id, p.pizza_name, COUNT(c.order_id)
 FROM pizza_runner.customer_orders c
 JOIN pizza_runner.pizza_names p
@@ -102,3 +95,11 @@ FROM pizza_runner.customer_orders c
 JOIN pizza_runner.runner_orders r
 ON c.order_id = r.order_id
 WHERE r.cancellation = ''
+
+--9. What was the total volume of pizzas ordered for each hour of the day?
+SELECT date_part('hour', order_time) AS hour_ordered, COUNT(order_id)
+FROM pizza_runner.customer_orders 
+GROUP BY date_part('hour', order_time) 
+ORDER BY hour_ordered;
+
+
