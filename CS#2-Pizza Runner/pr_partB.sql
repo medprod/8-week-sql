@@ -76,4 +76,22 @@ ON c.order_id = r.order_id
 GROUP BY c.customer_id
 ORDER BY c.customer_id
 
+--5. What was the difference between the longest and shortest delivery times for all orders?
+
+--update column to a numeric datatype
+UPDATE pizza_runner.runner_orders
+SET duration = NULL
+WHERE duration = '';
+
+UPDATE pizza_runner.runner_orders
+SET duration = TRIM('minutes' FROM duration) 
+WHERE distance IS NOT NULL;
+
+ALTER TABLE pizza_runner.runner_orders
+ALTER column duration TYPE numeric 
+USING duration::numeric;
+
+--query for 5
+SELECT MAX(duration) - MIN(duration) AS time_difference
+FROM pizza_runner.runner_orders;
 
