@@ -5,7 +5,7 @@ SELECT * FROM pizza_runner.pizza_names;
 SELECT * FROM pizza_runner.pizza_recipes;
 SELECT * FROM pizza_runner.pizza_toppings;
 
---Runner and Customer Experience
+--B. Runner and Customer Experience
 
 --1.How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)
 WITH week_cte AS 
@@ -125,6 +125,4 @@ SELECT s.runner_id, s.successful_orders, t.total_orders,
 ROUND((s.successful_orders::decimal / t.total_orders)*100, 2) AS delivery_percentage
 FROM successful_orders_cte s
 JOIN total_orders_cte t ON s.runner_id = t.runner_id
-
-
 
