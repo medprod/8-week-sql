@@ -95,3 +95,23 @@ USING duration::numeric;
 SELECT MAX(duration) - MIN(duration) AS time_difference
 FROM pizza_runner.runner_orders;
 
+--6. What was the average speed for each runner for each delivery and do you notice any trend for these values?
+SELECT * FROM pizza_runner.runners;
+SELECT * FROM pizza_runner.customer_orders;
+SELECT * FROM pizza_runner.runner_orders;
+
+SELECT runner_id, order_id, distance, duration,
+ROUND(AVG(distance/duration)*60,2) AS avg_speed
+FROM pizza_runner.runner_orders
+WHERE cancellation = ''
+GROUP BY runner_id, order_id, distance, duration
+ORDER BY runner_id, order_id;
+
+
+
+
+
+
+
+
+
