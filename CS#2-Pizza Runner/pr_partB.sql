@@ -107,11 +107,24 @@ WHERE cancellation = ''
 GROUP BY runner_id, order_id, distance, duration
 ORDER BY runner_id, order_id;
 
-
-
-
-
-
+--7. What is the successful delivery percentage for each runner?
+WITH total_orders_cte AS (
+	SELECT runner_id, COUNT(order_id) AS total_orders 
+	FROM pizza_runner.runner_orders
+	GROUP BY runner_id
+	ORDER BY runner_id
+),
+successful_orders_cte AS(
+	SELECT runner_id, COUNT(order_id) as successful_orders
+	FROM pizza_runner.runner_orders
+	WHERE cancellation = ''
+	GROUP BY runner_id
+	ORDER BY runner_id
+)
+SELECT s.runner_id, s.successful_orders, t.total_orders,
+ROUND((s.successful_orders::decimal / t.total_orders)*100, 2) AS delivery_percentage
+FROM successful_orders_cte s
+JOIN total_orders_cte t ON s.runner_id = t.runner_id
 
 
 
