@@ -100,9 +100,7 @@ JOIN pizza_runner.pizza_toppings p ON e.exclusions = p.topping_id
 GROUP BY e.exclusions, p.topping_name
 ORDER BY exclusions_count DESC 
 
---4. Generate an order item for each record in the customers_orders table
-SELECT * FROM extras_temp;
-SELECT * FROM exclusions_temp;
+
 
 
 
